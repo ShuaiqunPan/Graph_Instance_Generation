@@ -138,251 +138,251 @@ def main(hparams):
     )
     trainer.fit(model=model, datamodule=datamodule)
     
-    # # After training or loading the model
-    # checkpoint_path = "/home/shuaiqun/Graph-instance-generation/pigvae-main/run4/epoch=55-step=10527.ckpt"
-    # model = PLGraphAE.load_from_checkpoint(checkpoint_path, critic=critic)  # Load from checkpoint if needed
+    # After training or loading the model
+    checkpoint_path = "/home/shuaiqun/Graph-instance-generation/pigvae-main/run4/epoch=55-step=10527.ckpt"
+    model = PLGraphAE.load_from_checkpoint(checkpoint_path, critic=critic)  # Load from checkpoint if needed
     
-    # save_dir = "/home/shuaiqun/Graph-instance-generation/pigvae-main/figures"
-    # os.makedirs(save_dir, exist_ok=True)
+    save_dir = "/home/shuaiqun/Graph-instance-generation/pigvae-main/figures"
+    os.makedirs(save_dir, exist_ok=True)
     
-    # datamodule = GraphDataModule(
-    # graph_family=hparams.graph_family,
-    # graph_kwargs=graph_kwargs,
-    # batch_size=1,
-    # distributed_sampler=False,
-    # num_workers=hparams.num_workers,
-    # samples_per_epoch=200,
-    # use_saved_graphs=True,
-    # save_dir="/home/shuaiqun/Graph-instance-generation/pigvae-main/saved_training_samples_mix_6000"
-    # )
+    datamodule = GraphDataModule(
+    graph_family=hparams.graph_family,
+    graph_kwargs=graph_kwargs,
+    batch_size=1,
+    distributed_sampler=False,
+    num_workers=hparams.num_workers,
+    samples_per_epoch=200,
+    use_saved_graphs=True,
+    save_dir="/home/shuaiqun/Graph-instance-generation/pigvae-main/saved_training_samples_mix_6000"
+    )
 
-    # datamodule.prepare_data()
-    # datamodule.setup()  # Optionally pass 'stage' if needed
-    # data_loader1 = datamodule.train_dataloader()  # Use the custom DataLoader for saved graphs
-    # N = len(data_loader1)
-    # save_path = "/home/shuaiqun/Graph-instance-generation/pigvae-main/figures/embeddings.npy"
-    # embeddings1 = model.generate_embeddings(data_loader1, save_path)
+    datamodule.prepare_data()
+    datamodule.setup()  # Optionally pass 'stage' if needed
+    data_loader1 = datamodule.train_dataloader()  # Use the custom DataLoader for saved graphs
+    N = len(data_loader1)
+    save_path = "/home/shuaiqun/Graph-instance-generation/pigvae-main/figures/embeddings.npy"
+    embeddings1 = model.generate_embeddings(data_loader1, save_path)
     
-    # graph_kwargs2 = {
-    #     "n_min": hparams.n_min,
-    #     "n_max": hparams.n_max,
-    #     "m_min": hparams.m_min,
-    #     "m_max": hparams.m_max,
-    #     "p_min": 0.2,
-    #     "p_max": 0.2
-    # }
-    # # List of values to iterate over
-    # p_values = [0.2, 0.4, 0.6, 0.8]
+    graph_kwargs2 = {
+        "n_min": hparams.n_min,
+        "n_max": hparams.n_max,
+        "m_min": hparams.m_min,
+        "m_max": hparams.m_max,
+        "p_min": 0.2,
+        "p_max": 0.2
+    }
+    # List of values to iterate over
+    p_values = [0.2, 0.4, 0.6, 0.8]
 
-    # # Dictionary to store the embeddings for each value
-    # all_embeddings = []
-    # all_embeddings.append(embeddings1)
+    # Dictionary to store the embeddings for each value
+    all_embeddings = []
+    all_embeddings.append(embeddings1)
 
-    # for p_value in p_values:
-    #     # Update p_min and p_max in graph_kwargs2
-    #     graph_kwargs2['p_min'] = p_value
-    #     graph_kwargs2['p_max'] = p_value
+    for p_value in p_values:
+        # Update p_min and p_max in graph_kwargs2
+        graph_kwargs2['p_min'] = p_value
+        graph_kwargs2['p_max'] = p_value
 
-    #     # Create a new GraphDataModule instance with updated kwargs
-    #     datamodule2 = GraphDataModule_without_dynamic(
-    #         graph_family=hparams.graph_family,
-    #         graph_kwargs=graph_kwargs2,
-    #         batch_size=1,
-    #         num_workers=hparams.num_workers,
-    #         samples_per_epoch=1000,
-    #         distributed_sampler=False,
-    #         use_full_dataset=True
-    #     )
+        # Create a new GraphDataModule instance with updated kwargs
+        datamodule2 = GraphDataModule_without_dynamic(
+            graph_family=hparams.graph_family,
+            graph_kwargs=graph_kwargs2,
+            batch_size=1,
+            num_workers=hparams.num_workers,
+            samples_per_epoch=1000,
+            distributed_sampler=False,
+            use_full_dataset=True
+        )
 
-    #     # Prepare data and set up the module
-    #     datamodule2.prepare_data()
-    #     datamodule2.setup()  # Optionally pass 'stage' if needed
+        # Prepare data and set up the module
+        datamodule2.prepare_data()
+        datamodule2.setup()  # Optionally pass 'stage' if needed
 
-    #     # Get the DataLoader
-    #     data_loader2 = datamodule2.val_dataloader()
+        # Get the DataLoader
+        data_loader2 = datamodule2.val_dataloader()
 
-    #     # Generate embeddings
-    #     save_path = f"/home/shuaiqun/Graph-instance-generation/pigvae-main/figures/embeddings_{p_value}.npy"
-    #     embeddings = model.generate_embeddings(data_loader2, save_path)
-    #     all_embeddings.append(embeddings)
+        # Generate embeddings
+        save_path = f"/home/shuaiqun/Graph-instance-generation/pigvae-main/figures/embeddings_{p_value}.npy"
+        embeddings = model.generate_embeddings(data_loader2, save_path)
+        all_embeddings.append(embeddings)
     
-    # print(len(all_embeddings))
-    # combined_embeddings = np.vstack(all_embeddings)
+    print(len(all_embeddings))
+    combined_embeddings = np.vstack(all_embeddings)
     
-    # reducer = umap.UMAP()
-    # embeddings_scaled = StandardScaler().fit_transform(combined_embeddings)
-    # embeddings = reducer.fit_transform(embeddings_scaled)
-    # # Plotting
-    # fig, ax = plt.subplots()
-    # colors = ['red', 'orange', 'blue', 'purple', 'black']  # Different colors for each group
-    # labels = ['p=0.5', 'p=0.2', 'p=0.4', 'p=0.6', 'p=0.8']  # Labels for each group
-    # group_sizes = [6000, 1000, 1000, 1000, 1000]
-    # point_size = 10
+    reducer = umap.UMAP()
+    embeddings_scaled = StandardScaler().fit_transform(combined_embeddings)
+    embeddings = reducer.fit_transform(embeddings_scaled)
+    # Plotting
+    fig, ax = plt.subplots()
+    colors = ['red', 'orange', 'blue', 'purple', 'black']  # Different colors for each group
+    labels = ['p=0.5', 'p=0.2', 'p=0.4', 'p=0.6', 'p=0.8']  # Labels for each group
+    group_sizes = [6000, 1000, 1000, 1000, 1000]
+    point_size = 10
 
-    # start_idx = 0
-    # for i in range(5):
-    #     end_idx = start_idx + group_sizes[i]
-    #     ax.scatter(embeddings[start_idx:end_idx, 0], embeddings[start_idx:end_idx, 1], c=colors[i], label=labels[i], s=point_size)
-    #     start_idx = end_idx
+    start_idx = 0
+    for i in range(5):
+        end_idx = start_idx + group_sizes[i]
+        ax.scatter(embeddings[start_idx:end_idx, 0], embeddings[start_idx:end_idx, 1], c=colors[i], label=labels[i], s=point_size)
+        start_idx = end_idx
         
-    # ax.legend()
-    # plt.savefig("figures/latent_space_5_groups.pdf")
+    ax.legend()
+    plt.savefig("figures/latent_space_5_groups.pdf")
     
-    # threshold = 0.5  # Define your threshold
-    # with torch.no_grad():
-    #     model.eval()
+    threshold = 0.5  # Define your threshold
+    with torch.no_grad():
+        model.eval()
         
-    #     true_labels = []
-    #     predicted_probs = []
+        true_labels = []
+        predicted_probs = []
         
-    #     # Initialize lists to store metrics for each batch
-    #     mse_losses = []
-    #     mae_losses = []
-    #     edit_distances = []
-    #     individual_roc_auc_scores = []
+        # Initialize lists to store metrics for each batch
+        mse_losses = []
+        mae_losses = []
+        edit_distances = []
+        individual_roc_auc_scores = []
         
-    #     input_edge_probs = []
-    #     reconstructed_edge_probs = []
+        input_edge_probs = []
+        reconstructed_edge_probs = []
 
-    #     for k, batch in enumerate(data_loader1):
+        for k, batch in enumerate(data_loader1):
             
-    #         print("Batch structure:", batch)  # Add this line for debugging
-    #         print(batch.edge_features[0, :, :, 0])
-    #         x = batch.node_features.double()
-    #         L = batch.edge_features.double()
-    #         mask = batch.mask.double() if batch.mask is not None else None
+            print("Batch structure:", batch)  # Add this line for debugging
+            print(batch.edge_features[0, :, :, 0])
+            x = batch.node_features.double()
+            L = batch.edge_features.double()
+            mask = batch.mask.double() if batch.mask is not None else None
         
-    #         graph = DenseGraphBatch(node_features=x, edge_features=L, mask=mask)
-    #         graph_pred_batch, perm, mu, logvar = model(graph, training=False)
-    #         print(graph_pred_batch)
+            graph = DenseGraphBatch(node_features=x, edge_features=L, mask=mask)
+            graph_pred_batch, perm, mu, logvar = model(graph, training=False)
+            print(graph_pred_batch)
             
-    #         # Check if the node order is preserved
-    #         node_order_preserved = check_node_order_preservation(perm)
-    #         print(f"Batch {k}: Node order preserved: {node_order_preserved}")
+            # Check if the node order is preserved
+            node_order_preserved = check_node_order_preservation(perm)
+            print(f"Batch {k}: Node order preserved: {node_order_preserved}")
             
-    #         plt.figure(figsize=(16, 8))  # Set up the figure for side-by-side subplots
+            plt.figure(figsize=(16, 8))  # Set up the figure for side-by-side subplots
 
-    #         # Plot the original graph on the left, convert the original edge features to an adjacency matrix
-    #         original_edge_features = batch.edge_features[0].double()
-    #         num_nodes = original_edge_features.shape[0]
-    #         print("Number of nodes: ", num_nodes)
-    #         original_adjacency_matrix = torch.zeros((num_nodes, num_nodes))
-    #         for i in range(num_nodes):
-    #             for j in range(num_nodes):
-    #                 if original_edge_features[i, j, 1] > threshold:
-    #                     original_adjacency_matrix[i, j] = 1
+            # Plot the original graph on the left, convert the original edge features to an adjacency matrix
+            original_edge_features = batch.edge_features[0].double()
+            num_nodes = original_edge_features.shape[0]
+            print("Number of nodes: ", num_nodes)
+            original_adjacency_matrix = torch.zeros((num_nodes, num_nodes))
+            for i in range(num_nodes):
+                for j in range(num_nodes):
+                    if original_edge_features[i, j, 1] > threshold:
+                        original_adjacency_matrix[i, j] = 1
                 
-    #         original_edges = extract_edges(original_edge_features)
-    #         plot_graph(original_edges, f"Original Graph {k}", subplot=(1, 2, 1))
+            original_edges = extract_edges(original_edge_features)
+            plot_graph(original_edges, f"Original Graph {k}", subplot=(1, 2, 1))
 
-    #         # Plot the reconstructed graph on the right, convert the predicted probabilities to an adjacency matrix
-    #         reconstructed_edge_probabilities = torch.sigmoid(graph_pred_batch.edge_features[0]).double()  # Convert to double for MSE calculation
-    #         reconstructed_adjacency_matrix = torch.zeros((num_nodes, num_nodes))
-    #         predicted_reconstructed_adjacency_matrix = torch.zeros((num_nodes, num_nodes))
-    #         for i in range(num_nodes):
-    #             for j in range(num_nodes):
-    #                 predicted_reconstructed_adjacency_matrix[i, j] = reconstructed_edge_probabilities[i, j, 1]
-    #                 if reconstructed_edge_probabilities[i, j, 1] > threshold:
-    #                     reconstructed_adjacency_matrix[i, j] = 1
+            # Plot the reconstructed graph on the right, convert the predicted probabilities to an adjacency matrix
+            reconstructed_edge_probabilities = torch.sigmoid(graph_pred_batch.edge_features[0]).double()  # Convert to double for MSE calculation
+            reconstructed_adjacency_matrix = torch.zeros((num_nodes, num_nodes))
+            predicted_reconstructed_adjacency_matrix = torch.zeros((num_nodes, num_nodes))
+            for i in range(num_nodes):
+                for j in range(num_nodes):
+                    predicted_reconstructed_adjacency_matrix[i, j] = reconstructed_edge_probabilities[i, j, 1]
+                    if reconstructed_edge_probabilities[i, j, 1] > threshold:
+                        reconstructed_adjacency_matrix[i, j] = 1
                         
-    #         plot_probability_matrix(predicted_reconstructed_adjacency_matrix, original_adjacency_matrix, k)
+            plot_probability_matrix(predicted_reconstructed_adjacency_matrix, original_adjacency_matrix, k)
             
-    #         reconstructed_adjacency_matrix.fill_diagonal_(0)
-    #         input_edge_probs.append(torch.mean(original_adjacency_matrix))
-    #         reconstructed_edge_probs.append(torch.mean(reconstructed_adjacency_matrix))
+            reconstructed_adjacency_matrix.fill_diagonal_(0)
+            input_edge_probs.append(torch.mean(original_adjacency_matrix))
+            reconstructed_edge_probs.append(torch.mean(reconstructed_adjacency_matrix))
             
-    #         # Convert the adjacency matrices to NetworkX graphs
-    #         original_graph = nx.from_numpy_array(original_adjacency_matrix.numpy())
-    #         reconstructed_graph = nx.from_numpy_array(reconstructed_adjacency_matrix.numpy())
+            # Convert the adjacency matrices to NetworkX graphs
+            original_graph = nx.from_numpy_array(original_adjacency_matrix.numpy())
+            reconstructed_graph = nx.from_numpy_array(reconstructed_adjacency_matrix.numpy())
             
-    #         # Calculate and print MSE loss for each batch
-    #         mse_loss = F.mse_loss(reconstructed_edge_probabilities, original_edge_features).item()
-    #         mse_losses.append(mse_loss)
+            # Calculate and print MSE loss for each batch
+            mse_loss = F.mse_loss(reconstructed_edge_probabilities, original_edge_features).item()
+            mse_losses.append(mse_loss)
             
-    #         mae_loss = np.mean(np.abs(reconstructed_edge_probabilities.cpu().numpy() - original_edge_features.cpu().numpy()))
-    #         mae_losses.append(mae_loss)
+            mae_loss = np.mean(np.abs(reconstructed_edge_probabilities.cpu().numpy() - original_edge_features.cpu().numpy()))
+            mae_losses.append(mae_loss)
             
-    #         # Calculate the graph edit distance
-    #         # distance = graph_edit_distance(original_graph, reconstructed_graph)
-    #         # edit_distances.append(distance)
+            # Calculate the graph edit distance
+            # distance = graph_edit_distance(original_graph, reconstructed_graph)
+            # edit_distances.append(distance)
     
-    #         num_nodes = reconstructed_edge_probabilities.shape[1]
+            num_nodes = reconstructed_edge_probabilities.shape[1]
     
-    #         reconstructed_edges = [(a, b) for a in range(num_nodes) for b in range(num_nodes) if reconstructed_edge_probabilities[a][b, 1] > threshold]
-    #         plot_graph(reconstructed_edges, f"Reconstructed Graph {k}", subplot=(1, 2, 2))
+            reconstructed_edges = [(a, b) for a in range(num_nodes) for b in range(num_nodes) if reconstructed_edge_probabilities[a][b, 1] > threshold]
+            plot_graph(reconstructed_edges, f"Reconstructed Graph {k}", subplot=(1, 2, 2))
             
-    #         # ROC_AUC
-    #         # Assuming the original graph's edges are represented as binary (1 for edge, 0 for no edge)
-    #         true_edge_features = batch.edge_features[0].double()
+            # ROC_AUC
+            # Assuming the original graph's edges are represented as binary (1 for edge, 0 for no edge)
+            true_edge_features = batch.edge_features[0].double()
             
-    #         if k ==0:
-    #             print(true_edge_features)
+            if k ==0:
+                print(true_edge_features)
             
-    #         # Compute ROC-AUC for the current batch
-    #         true_labels = true_edge_features[:, :, 1].flatten().tolist()
-    #         predicted_probs = reconstructed_edge_probabilities[:, :, 1].flatten().tolist()
-    #         roc_auc = roc_auc_score(true_labels, predicted_probs)
+            # Compute ROC-AUC for the current batch
+            true_labels = true_edge_features[:, :, 1].flatten().tolist()
+            predicted_probs = reconstructed_edge_probabilities[:, :, 1].flatten().tolist()
+            roc_auc = roc_auc_score(true_labels, predicted_probs)
             
-    #         # Store the ROC-AUC score
-    #         individual_roc_auc_scores.append(roc_auc)
+            # Store the ROC-AUC score
+            individual_roc_auc_scores.append(roc_auc)
             
-    #         # Modify the metrics text to include only ROC-AUC and Graph Edit Distance
-    #         # metrics_text = f"ROC-AUC: {individual_roc_auc_scores[k]:.4f}\nGraph Edit Distance: {edit_distances[k]:.4f}"
-    #         # plt.figtext(0.5, 0.01, metrics_text, ha="center", fontsize=12, bbox={"facecolor": "orange", "alpha": 0.5, "pad": 5})
+            # Modify the metrics text to include only ROC-AUC and Graph Edit Distance
+            # metrics_text = f"ROC-AUC: {individual_roc_auc_scores[k]:.4f}\nGraph Edit Distance: {edit_distances[k]:.4f}"
+            # plt.figtext(0.5, 0.01, metrics_text, ha="center", fontsize=12, bbox={"facecolor": "orange", "alpha": 0.5, "pad": 5})
 
-    #         plt.savefig(f"figures/Graph Comparison {k}.png")
-    #         plt.close()
+            plt.savefig(f"figures/Graph Comparison {k}.png")
+            plt.close()
         
-    #     # Create a DataFrame from the scores and distances
-    #     df = pd.DataFrame({
-    #         'ROC_AUC_Score': individual_roc_auc_scores
-    #         # 'Graph_Edit_Distance': edit_distances
-    #     })
+        # Create a DataFrame from the scores and distances
+        df = pd.DataFrame({
+            'ROC_AUC_Score': individual_roc_auc_scores
+            # 'Graph_Edit_Distance': edit_distances
+        })
 
-    #     # Specify the CSV file name
-    #     csv_file_name = 'graph_metrics.csv'
+        # Specify the CSV file name
+        csv_file_name = 'graph_metrics.csv'
 
-    #     # Save the DataFrame to a CSV file
-    #     df.to_csv(csv_file_name, index=False)
+        # Save the DataFrame to a CSV file
+        df.to_csv(csv_file_name, index=False)
 
-    #     print(f"Data saved to {csv_file_name}")
+        print(f"Data saved to {csv_file_name}")
 
-    #     # Calculate ROC-AUC
-    #     mean_roc_auc = np.mean(individual_roc_auc_scores)
-    #     std_error_roc_auc = np.std(individual_roc_auc_scores) / np.sqrt(len(individual_roc_auc_scores))
+        # Calculate ROC-AUC
+        mean_roc_auc = np.mean(individual_roc_auc_scores)
+        std_error_roc_auc = np.std(individual_roc_auc_scores) / np.sqrt(len(individual_roc_auc_scores))
         
-    #     print(f"Mean ROC-AUC: {mean_roc_auc}")
-    #     print(f"Standard Error of ROC-AUC: {std_error_roc_auc}")
+        print(f"Mean ROC-AUC: {mean_roc_auc}")
+        print(f"Standard Error of ROC-AUC: {std_error_roc_auc}")
 
-    #     # # Calculate mean and standard error for Graph Edit Distance
-    #     # mean_ged = np.mean(edit_distances)
-    #     # stderr_ged = np.std(edit_distances) / np.sqrt(len(edit_distances))
+        # # Calculate mean and standard error for Graph Edit Distance
+        # mean_ged = np.mean(edit_distances)
+        # stderr_ged = np.std(edit_distances) / np.sqrt(len(edit_distances))
 
-    #     # print(f"Mean Graph Edit Distance: {mean_ged:.4f}, Standard Error: {stderr_ged:.4f}")
+        # print(f"Mean Graph Edit Distance: {mean_ged:.4f}, Standard Error: {stderr_ged:.4f}")
 
-    #     # After processing all batches
-    #     # Prepare DataFrame for plotting
-    #     data = pd.DataFrame({
-    #         "kind": ["input"] * len(input_edge_probs) + ["reconstructed"] * len(reconstructed_edge_probs),
-    #         "density": np.array(input_edge_probs + reconstructed_edge_probs)
-    #     })
+        # After processing all batches
+        # Prepare DataFrame for plotting
+        data = pd.DataFrame({
+            "kind": ["input"] * len(input_edge_probs) + ["reconstructed"] * len(reconstructed_edge_probs),
+            "density": np.array(input_edge_probs + reconstructed_edge_probs)
+        })
 
-    #     # Plotting
-    #     fig, ax = plt.subplots(figsize=(6, 6))
-    #     ax.set_title("Edge Probability Distribution")
-    #     sns.violinplot(data=data, x="kind", y="density", ax=ax)
-    #     plt.savefig("figures/edge_prob_distribution.pdf")
-    #     plt.close(fig)
+        # Plotting
+        fig, ax = plt.subplots(figsize=(6, 6))
+        ax.set_title("Edge Probability Distribution")
+        sns.violinplot(data=data, x="kind", y="density", ax=ax)
+        plt.savefig("figures/edge_prob_distribution.pdf")
+        plt.close(fig)
         
-    #     # Plotting the histogram
-    #     plt.figure(figsize=(8, 6))  # You can adjust the figure size as needed
-    #     plt.hist(edit_distances, bins='auto', color='blue', alpha=0.7)  # 'auto' lets matplotlib decide the number of bins
-    #     plt.title('Histogram of Graph Edit Distances')
-    #     plt.xlabel('Graph Edit Distance')
-    #     plt.ylabel('Frequency')
-    #     plt.grid(True)
-    #     plt.savefig("figures/graph_edit_distance_histogram.png")  # Saving the plot
-    #     plt.close()
+        # Plotting the histogram
+        plt.figure(figsize=(8, 6))  # You can adjust the figure size as needed
+        plt.hist(edit_distances, bins='auto', color='blue', alpha=0.7)  # 'auto' lets matplotlib decide the number of bins
+        plt.title('Histogram of Graph Edit Distances')
+        plt.xlabel('Graph Edit Distance')
+        plt.ylabel('Frequency')
+        plt.grid(True)
+        plt.savefig("figures/graph_edit_distance_histogram.png")  # Saving the plot
+        plt.close()
 
 if __name__ == '__main__':
     parser = ArgumentParser()
