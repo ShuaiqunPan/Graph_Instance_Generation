@@ -96,7 +96,7 @@ def main(hparams):
         reload_dataloaders_every_epoch=True,
         resume_from_checkpoint=hparams.resume_ckpt if hparams.resume_ckpt != "" else None
     )
-    trainer.fit(model=model, datamodule=datamodule)
+    # trainer.fit(model=model, datamodule=datamodule)
     
     # After training or loading the model
     checkpoint_path = "/home/shuaiqun/Graph-instance-generation/pigvae-main/run4/epoch=55-step=10527.ckpt"
